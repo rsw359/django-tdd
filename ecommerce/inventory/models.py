@@ -1,13 +1,9 @@
-from re import U
-from tabnanny import verbose
-from unittest.util import _MAX_LENGTH
-
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey, TreeManyToManyField
 
 
-class Category:
+class Category(MPTTModel):
     """
     Inventory category table implemented with mptt
     """
@@ -34,19 +30,20 @@ class Category:
     parent = TreeForeignKey(
         "self",
         on_delete=models.PROTECT,
-        related_name= "children",
+        related_name="children",
         null=True,
-        blank=True,  
-        unique= False,
+        blank=True,
+        unique=False,
         verbose_name=_("parent of category"),
-        help_text=_("format: not required")
+        help_text=_("format: not required"),
+    )
 
     class MPTTMeta:
-      order_insertion_by: ["name"]
-    
+        order_insertion_by = ["name"]
+
     class Meta:
-      verbose_name = _("product category")
-      verbose_name_plural = _("product categories
-    
+        verbose_name = _("product category")
+        verbose_name_plural = _("product categories")
+
     def __str__(self):
-      return self.name
+        return self.name

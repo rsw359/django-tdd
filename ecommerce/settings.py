@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     # Local applications
     "ecommerce.dashboard",
     "ecommerce.inventory",
+    # Externally applications
+    "mptt",
 ]
 
 MIDDLEWARE = [
