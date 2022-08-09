@@ -1,6 +1,7 @@
 from unittest import result
 
 import pytest
+from django.db import IntegrityError
 from ecommerce.inventory import models
 from typing_extensions import assert_never
 
@@ -80,9 +81,10 @@ def test_inventory_db_product_dbfixture(
     result = models.Product.objects.get(id=id)
     result_created_at = result.created_at.strftime(
         "%Y-%m-%d %H:%M:%S"
-    )  # time not formatted as line 52, formatted here
-
-    result_updated_at = result.updated_at.strftime("%Y-%m-%d %H:%M:%")
+    )  # time not formatted as line 52,
+    result_updated_at = result.updated_at.strftime(
+        "%Y-%m-%d %H:%M:%"
+    )  # formatted here
     assert result.web_id == web_id
     assert result.name == name
     assert result.slug == slug
@@ -90,3 +92,11 @@ def test_inventory_db_product_dbfixture(
     assert result.is_active == is_active
     assert result.created_at == created_at
     assert result.updated_at == updated_at
+
+
+def test_db_product_uniqueness_integrity(db, product_factory):
+    new_web_id = product_factory.create(web_id=123456789)
+    with pytest.raises(
+        IntegrityError
+    ):  # if web id is not unique then raise exception
+        product_factory.create(web_id=123456789)
